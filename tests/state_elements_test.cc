@@ -13,3 +13,10 @@ TEST_F(StateElementsTest, InstructionTest) {
     EXPECT_EQ(6, se.get_current_instruction());
 }
 
+TEST_F(StateElementsTest, RegisterTest) {
+    se.set_register_value(0, 1);
+    se.set_register_value(1, 2);
+
+    EXPECT_EQ(1, se.get_register_value(0));
+    EXPECT_EQ(2, se.get_register_value(1));
+}
