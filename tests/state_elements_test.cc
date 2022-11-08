@@ -20,3 +20,10 @@ TEST_F(StateElementsTest, RegisterTest) {
     EXPECT_EQ(1, se.get_register_value(0));
     EXPECT_EQ(2, se.get_register_value(1));
 }
+
+TEST_F(StateElementsTest, ProgramCounterTest) {
+    se.set_program_counter(0);
+    EXPECT_EQ(0,se.get_program_counter());
+    se.set_program_counter(4);
+    EXPECT_EQ(4, se.get_program_counter());
+}
