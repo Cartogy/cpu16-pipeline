@@ -1,3 +1,5 @@
+#ifndef PIPELINE_REGISTER
+#define PIPELINE_REGISTER
 /* pipeline Registers for a Pipeline Architecture */
 
 struct PipelineRegister {
@@ -43,6 +45,5 @@ struct UpdateArch {
     T reg_index;
 };
 
-/** Implementation **/
 
-
+#endif
