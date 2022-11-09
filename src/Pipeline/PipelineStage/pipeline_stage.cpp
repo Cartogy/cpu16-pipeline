@@ -18,13 +18,29 @@ DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDec
     // 0010|++++++++++++| -> J-Type
     
     DecExecReg<uint16_t, uint16_t> dec_reg;
-    dec_reg.set_valid(1);
+    dec_reg.set_valid(true);
     dec_reg.control_op = reg.instruction;
     dec_reg.value_one = 0;
     dec_reg.value_two = 0;
 
 
     if (0x8000 & reg.instruction) {
+        // Implement Memory instructions.
+        uint16_t top_four_bits = (0xf000 & reg.instruction) >> 12;
+        // 0xc -> 12
+        // All instructions under 12 sstore the same pattern.
+        if (top_four_bits < 0xc) {
+            // acquire base address
+            uint16_t base_index = ((0xf << 8) & reg.instruction) >> 8;
+            uint16_t offset = 0xf & reg.instruction;
+
+            dec_reg.value_one = register_file[base_index];
+            dec_reg.value_two = offset;
+
+        } else {
+            // Branches and stuff
+        }
+
         // Is I-Type
         std::cout << "I Instruction" << std::endl;
     } else if (0x4000 & reg.instruction) {

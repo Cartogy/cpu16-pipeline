@@ -5,6 +5,7 @@ project(CPUEMUPipeline)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_EXPORT_COMPILE_COMMANDS True)
+set(CMAKE_BUILD_TYPE Debug)
 
 
 include(FetchContent)

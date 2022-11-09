@@ -32,10 +32,14 @@
 
 0100 -> Signal of I-Type
 
+                           base dst     offset
 * Load            => |1000|++++|++++|++++|
+                           base  reg offset
 * Store           => |1001|++++|++++|++++|
+                           src  dst  imm
 * Addi            => |1010|++++|++++|++++|
 * Subi            => |1011|++++|++++|++++|
+                           reg1 reg2 offset/branching
 * Branch-On-Equal => |1100|++++|++++|++++|
 
 ### J-Type

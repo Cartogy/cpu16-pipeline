@@ -62,4 +62,31 @@ TEST_F(PipelineStageTest, DecodeStageRCategory) {
     EXPECT_EQ(se.get_register_value(1), reg.value_two);
 }
 
-TEST_
+TEST_F(PipelineStageTest, DecodeStageICategoryMemory) {
+    PDecodeStage decode_stage;
+
+    // setup fetch register pipeline
+    IfDecReg<uint16_t> fetch_reg;
+    fetch_reg.set_valid(true);
+    fetch_reg.instruction = 0x8013;   // load instruction
+
+    // Test the pipeline register
+    DecExecReg<uint16_t, uint16_t> reg = decode_stage.exec(se.get_register_file(), fetch_reg);
+
+    EXPECT_EQ(0x8013, reg.control_op);
+    // store the base address from the register.
+    EXPECT_EQ(se.get_register_value(0), reg.value_one);
+    // store the offset
+    EXPECT_EQ(3, reg.value_two);
+
+    fetch_reg.instruction = 0x9015; // store instruction
+    reg = decode_stage.exec(se.get_register_file(), fetch_reg);
+
+    EXPECT_EQ(0x9015, reg.control_op);
+    // get the base address from the register.
+    EXPECT_EQ(se.get_register_value(0), reg.value_one);
+    // get the offset
+    EXPECT_EQ(5, reg.value_two);
+
+
+}
