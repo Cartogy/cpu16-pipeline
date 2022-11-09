@@ -14,4 +14,9 @@ class PFetchStage : public PipelineStage {
         IfDecReg<uint16_t> exec(InstructionMemory<uint16_t> ins_mem, uint16_t program_counter);
 };
 
+class PDecodeStage : public PipelineStage {
+    public:
+        DecExecReg<uint16_t, uint16_t> exec(uint16_t *register_file, IfDecReg<uint16_t> reg);
+};
+
 #endif

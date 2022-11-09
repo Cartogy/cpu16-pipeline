@@ -8,6 +8,10 @@ class StateElements {
         uint16_t current_instruction;
         uint16_t registers[MAX_REGISTERS];
     public:
+        StateElements();
+        
+        void clear_registers();
+
         void set_instruction(uint16_t ins);
         uint16_t get_current_instruction();
 
@@ -16,4 +20,6 @@ class StateElements {
 
         void set_register_value(uint16_t reg_index, uint16_t value);
         uint16_t get_register_value(uint16_t reg_index);
+
+        uint16_t* get_register_file();
 };
