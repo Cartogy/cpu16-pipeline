@@ -39,6 +39,12 @@ DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDec
 
         } else {
             // Branches and stuff
+            /* Branches for now */
+            uint16_t reg_one_index = ((0xf << 8) & reg.instruction) >> 8;
+            uint16_t reg_two_index = ((0xf << 4) & reg.instruction) >> 4;
+
+            dec_reg.value_one = register_file[reg_one_index];
+            dec_reg.value_two = register_file[reg_two_index];
         }
 
         // Is I-Type
@@ -56,8 +62,20 @@ DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDec
         dec_reg.value_two = register_file[reg_two_index];
 
     } else {
+        uint16_t jump = 0x0fff & reg.instruction;
+        dec_reg.value_one = jump;
         std::cout << "J Instruction" << std::endl;
     }
 
     return dec_reg;
+}
+
+ExecMemReg<uint16_t, uint16_t> PExecStage::exec(DecExecReg<uint16_t, uint16_t> reg) {
+
+    ExecMemReg<uint16_t, uint16_t> exec_reg;
+
+    exec_reg.set_valid(true);
+    exec_reg.control_op = reg.control_op;
+
+    return exec_reg;
 }

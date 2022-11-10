@@ -19,4 +19,9 @@ class PDecodeStage : public PipelineStage {
         DecExecReg<uint16_t, uint16_t> exec(uint16_t *register_file, IfDecReg<uint16_t> reg);
 };
 
+class PExecStage : public PipelineStage {
+    public:
+        ExecMemReg<uint16_t, uint16_t> exec(DecExecReg<uint16_t, uint16_t> reg);
+};
+
 #endif
