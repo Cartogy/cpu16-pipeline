@@ -166,3 +166,102 @@ TEST_F(PipelineStageTest, ExecStageRCategory) {
     EXPECT_EQ(sub_ins, reg.control_op);
     EXPECT_EQ(2, reg.value);
 }
+
+TEST_F(PipelineStageTest, ExecStageICategoryMemory) {
+    PExecStage exec_stage;
+
+    // Prepare DecExec register
+    DecExecReg<uint16_t, uint16_t> dec_reg;
+    dec_reg.set_valid(true);
+
+    dec_reg.control_op = load_ins;           // load instruction
+    dec_reg.value_one = 4;
+    dec_reg.value_two = 3;
+
+    ExecMemReg<uint16_t, uint16_t> reg = exec_stage.exec(dec_reg);
+
+    EXPECT_EQ(load_ins, reg.control_op);
+    EXPECT_EQ(7, reg.value);
+
+    /* store instruction */
+
+    dec_reg.control_op = store_ins;
+
+    reg = exec_stage.exec(dec_reg);
+
+    EXPECT_EQ(store_ins, reg.control_op);
+    EXPECT_EQ(7, reg.value);
+}
+
+TEST_F(PipelineStageTest, ExecStageICategoryImm) {
+    PExecStage exec_stage;
+
+    // Prepare DecExec register
+    DecExecReg<uint16_t, uint16_t> dec_reg;
+    dec_reg.set_valid(true);
+
+    dec_reg.control_op = addi_ins;           // addi instruction
+    dec_reg.value_one = 4;
+    dec_reg.value_two = 4;
+
+    ExecMemReg<uint16_t, uint16_t> reg = exec_stage.exec(dec_reg);
+    EXPECT_EQ(addi_ins, reg.control_op);
+    EXPECT_EQ(8, reg.value);
+}
+
+TEST_F(PipelineStageTest, ExecStageICategoryBranch) {
+    PExecStage exec_stage;
+
+    // Prepare DecExec register
+    DecExecReg<uint16_t, uint16_t> dec_reg;
+    dec_reg.set_valid(true);
+
+    dec_reg.control_op = bne_ins;           // bne instruction
+    dec_reg.value_one = 4;
+    dec_reg.value_two = 2;
+
+    ExecMemReg<uint16_t, uint16_t> reg = exec_stage.exec(dec_reg);
+    EXPECT_EQ(bne_ins, reg.control_op);
+    EXPECT_EQ(2, reg.value);
+}
+
+TEST_F(PipelineStageTest, ExecStageJCategory) {
+    PExecStage exec_stage;
+
+    // Prepare DecExec register
+    DecExecReg<uint16_t, uint16_t> dec_reg;
+    dec_reg.set_valid(true);
+
+    dec_reg.control_op = jmp_ins;           // bne instruction
+    dec_reg.value_one = 0x010a;
+    dec_reg.value_two = 0;
+
+    ExecMemReg<uint16_t, uint16_t> reg = exec_stage.exec(dec_reg);
+    EXPECT_EQ(jmp_ins, reg.control_op);
+    EXPECT_EQ(0x010a, reg.value);
+}
+
+/** Memory Stage **/
+TEST_F(PipelineStageTest, MemoryStageRCategory) {
+    PMemStage mem_stage;
+
+    ExecMemReg<uint16_t, uint16_t> exec_reg;
+    exec_reg.set_valid(true);
+    /** Add instruction **/
+    exec_reg.control_op = add_ins;
+    exec_reg.value = 6;
+
+    MemWriteReg<uint16_t, uint16_t> reg = mem_stage.exec(exec_reg);
+
+    EXPECT_EQ(add_ins, reg.control_op);
+    EXPECT_EQ(6, reg.value);
+
+    /** Sub instruction **/
+    exec_reg.control_op = sub_ins;
+    exec_reg.value = 2;
+
+    reg = mem_stage.exec(exec_reg);
+
+    EXPECT_EQ(sub_ins, reg.control_op);
+    EXPECT_EQ(2, reg.value);
+}

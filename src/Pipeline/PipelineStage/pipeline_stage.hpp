@@ -24,4 +24,7 @@ class PExecStage : public PipelineStage {
         ExecMemReg<uint16_t, uint16_t> exec(DecExecReg<uint16_t, uint16_t> reg);
 };
 
+class PMemStage : public PipelineStage {
+};
+
 #endif

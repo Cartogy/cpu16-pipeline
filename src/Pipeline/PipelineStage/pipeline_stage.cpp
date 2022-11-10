@@ -71,11 +71,41 @@ DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDec
 }
 
 ExecMemReg<uint16_t, uint16_t> PExecStage::exec(DecExecReg<uint16_t, uint16_t> reg) {
+    uint16_t op_code = ((0xf << 12) & reg.control_op) >> 12;
 
     ExecMemReg<uint16_t, uint16_t> exec_reg;
 
     exec_reg.set_valid(true);
     exec_reg.control_op = reg.control_op;
+    
+    if (op_code & 0x8) {    // I type instruction
+        if (op_code > 0x9) {
+            if (op_code >= 0xc) {   // branching
+                exec_reg.value = reg.value_one - reg.value_two;
+            } else {        // immediate
+                if (op_code == 0xa) {       // addi
+                    exec_reg.value = reg.value_one + reg.value_two;
+                } else {                    // subi (0xb)
+                    exec_reg.value = reg.value_one - reg.value_two;
+                }
+            }
+        } else {    // load/store instructions
+            exec_reg.value = reg.value_one + reg.value_two;
+        }
+    }  else if (op_code & 0x4) {    // R-Type
+        // Need to check bits 
+        if (op_code == 0x4) {
+            exec_reg.value = reg.value_one + reg.value_two;
+        } else if (op_code == 0x5) {
+            exec_reg.value = reg.value_one - reg.value_two;
+        } else if (op_code == 0x6) {
+            exec_reg.value = reg.value_one * reg.value_two;
+        } else {
+            exec_reg.value = reg.value_one / reg.value_two;
+        }
+    } else {    // J-Type
+        exec_reg.value = reg.value_one + 0;
+    }
 
     return exec_reg;
 }
