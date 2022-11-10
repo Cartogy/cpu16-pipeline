@@ -4,6 +4,7 @@
 
 #include "InstructionMemory/instruction_memory.hpp"
 #include "PipelineRegister/pipeline_register.hpp"
+#include "Memory/memory.hpp"
 
 class PipelineStage {
 };
@@ -26,7 +27,7 @@ class PExecStage : public PipelineStage {
 
 class PMemStage : public PipelineStage {
     public:
-        MemWriteReg<uint16_t, uint16_t> exec(ExecMemReg<uint16_t, uint16_t> reg);
+        MemWriteReg<uint16_t, uint16_t> exec(Memory mem, ExecMemReg<uint16_t, uint16_t> reg);
 };
 
 #endif

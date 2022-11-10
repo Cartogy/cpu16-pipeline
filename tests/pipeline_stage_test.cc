@@ -5,10 +5,12 @@
 #include "PipelineRegister/pipeline_register.hpp"
 #include "PipelineStage/pipeline_stage.hpp"
 #include "StateElements/state_elements.hpp"
+#include "Memory/memory.hpp"
 
 class PipelineStageTest : public ::testing::Test {
     protected:
         InstructionMemory<uint16_t> ins_mem;
+        Memory mem;
         StateElements se;
 
         uint16_t add_ins = 0x4012;
@@ -25,6 +27,9 @@ class PipelineStageTest : public ::testing::Test {
 
         se.set_register_value(0, 4);
         se.set_register_value(1, 2);
+
+        mem.store(0, 10);
+        mem.store(2, 24);
     }
 
 };
@@ -251,7 +256,7 @@ TEST_F(PipelineStageTest, MemoryStageRCategory) {
     exec_reg.control_op = add_ins;
     exec_reg.value = 6;
 
-    MemWriteReg<uint16_t, uint16_t> reg = mem_stage.exec(exec_reg);
+    MemWriteReg<uint16_t, uint16_t> reg = mem_stage.exec(mem, exec_reg);
 
     EXPECT_EQ(add_ins, reg.control_op);
     EXPECT_EQ(6, reg.value);
@@ -260,7 +265,7 @@ TEST_F(PipelineStageTest, MemoryStageRCategory) {
     exec_reg.control_op = sub_ins;
     exec_reg.value = 2;
 
-    reg = mem_stage.exec(exec_reg);
+    reg = mem_stage.exec(mem, exec_reg);
 
     EXPECT_EQ(sub_ins, reg.control_op);
     EXPECT_EQ(2, reg.value);

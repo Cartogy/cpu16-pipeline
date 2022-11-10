@@ -30,7 +30,7 @@ DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDec
         uint16_t top_four_bits = (0xf000 & reg.instruction) >> 12;
         // 0xc -> 12
         // All instructions under 12 sstore the same pattern.
-        if (top_four_bits < 0xc) {
+        if (top_four_bits < 0xc) {  // Load/Store and immediate
             // acquire base address
             uint16_t base_index = ((0xf << 8) & reg.instruction) >> 8;
             uint16_t offset = 0xf & reg.instruction;
@@ -115,5 +115,17 @@ MemWriteReg<uint16_t, uint16_t> PMemStage::exec(Memory mem, ExecMemReg<uint16_t,
     MemWriteReg<uint16_t, uint16_t> mem_reg;
     mem_reg.set_valid(true);
 
+    uint16_t op_code = ((0xf << 12) & mem_reg.control_op) >> 12;
 
+    // Check type of instruction
+    // Either use memory or not depending if it is load/store.
+    if (op_code == 0x8) {   // load
+        uint16_t val = mem.load(reg.value); 
+    } else if (op_code == 0x9) {  // store
+
+    } else {
+        mem_reg.value = reg.value;
+    }
+
+    return mem_reg;
 }
