@@ -1,6 +1,7 @@
 
 #include "PipelineStage/pipeline_stage.hpp"
 #include "PipelineRegister/pipeline_register.hpp"
+#include "Memory/memory.hpp"
 
 IfDecReg<uint16_t> PFetchStage::exec(InstructionMemory<uint16_t> ins_mem, uint16_t program_counter) {
     IfDecReg<uint16_t> reg;
@@ -108,4 +109,11 @@ ExecMemReg<uint16_t, uint16_t> PExecStage::exec(DecExecReg<uint16_t, uint16_t> r
     }
 
     return exec_reg;
+}
+
+MemWriteReg<uint16_t, uint16_t> PMemStage::exec(Memory mem, ExecMemReg<uint16_t, uint16_t> reg) {
+    MemWriteReg<uint16_t, uint16_t> mem_reg;
+    mem_reg.set_valid(true);
+
+
 }
