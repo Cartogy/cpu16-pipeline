@@ -136,3 +136,56 @@ With a list of machine code instructions, we can add these instructions to the *
 This is demonstrated in the **Emulator** implementation.
 
 The benefit of this functional approach is that we are able to isolate each component in order to test their functionality; isolating the bugs to their respective components.
+# Pipeline Architecture
+
+The pipeline architecture is based on the 32-bit MIPS architecture.
+
+1. Fetch
+2. Decode
+3. Execute
+4. Memory
+5. Write Back
+
+## Pipeline Registers
+
+We have the following registers.
+* If/Dec register
+* Dec/Exec register
+* Exec/Mem register
+* Mem/WB register
+
+Each register has the following setting:
+* valid
+
+If the pipeline register is valid, then the pipeline executes.
+If not, then the pipeline does not execution.
+
+### If/Dec Register 
+
+Register contains the following data:
+* instruction
+* PC + 4
+
+### Dec/Exec Register
+
+This register contains the following data:
+* PC + 4
+* read reg one
+* read reg two
+* control op
+* immediate value
+* Write address/instruction
+
+### Exec/Mem Register
+
+This register contains the following data:
+* Branched PC
+* zero
+* ALU result
+* read reg two
+
+### Mem/WB Register
+
+This register contains the following data:
+* Read data
+* ALU result
