@@ -174,7 +174,7 @@ This register contains the following data:
 * read reg two
 * control op
 * immediate value
-* Write address/instruction
+* Write address register
 
 ### Exec/Mem Register
 
@@ -183,9 +183,11 @@ This register contains the following data:
 * zero
 * ALU result
 * read reg two
+* Write address register
 
 ### Mem/WB Register
 
 This register contains the following data:
 * Read data
 * ALU result
+* Write address register
