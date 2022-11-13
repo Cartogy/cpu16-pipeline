@@ -34,7 +34,7 @@
 
                            base dst     offset
 * Load            => |1000|++++|++++|++++|
-                           base  reg offset
+                           base reg offset
 * Store           => |1001|++++|++++|++++|
                            src  dst  imm
 * Addi            => |1010|++++|++++|++++|
@@ -138,6 +138,8 @@ This is demonstrated in the **Emulator** implementation.
 The benefit of this functional approach is that we are able to isolate each component in order to test their functionality; isolating the bugs to their respective components.
 # Pipeline Architecture
 
+![Microarchitecture Pipeline](micro_arch_pipeline.png)
+
 The pipeline architecture is based on the 32-bit MIPS architecture.
 
 1. Fetch
@@ -145,6 +147,7 @@ The pipeline architecture is based on the 32-bit MIPS architecture.
 3. Execute
 4. Memory
 5. Write Back
+
 
 ## Pipeline Registers
 
@@ -183,9 +186,11 @@ This register contains the following data:
 * zero
 * ALU result
 * read reg two
+* Write address/instruction
 
 ### Mem/WB Register
 
 This register contains the following data:
 * Read data
 * ALU result
+* Write address/instruction

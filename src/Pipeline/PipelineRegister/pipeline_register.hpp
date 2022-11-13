@@ -14,27 +14,35 @@ struct PipelineRegister {
 template <typename T>
 struct IfDecReg : PipelineRegister {
         T instruction;
+        T pc_increment;
 };
 
 template<typename T, typename U>
 struct DecExecReg : PipelineRegister {
         T control_op;
-        U value_one;
-        U value_two;
+        T pc_increment;
+        T write_back_address;
+        U reg_one;
+        U reg_two;
+        U imm_value;
+        U jmp_address;
 };
 
 template <typename T, typename U>
 struct ExecMemReg : PipelineRegister {
         T control_op;
-        U value;
+        T branch_pc;    // either branched or PC+4
+        T write_back_address;
+        U alu_value;
+        U write_reg_data;
 };
 
 template <typename T, typename U>
 struct MemWriteReg: PipelineRegister {
         T control_op;
-        U value;
-        bool take_branch;
-
+        T write_back_address;
+        U data_read;
+        U alu_value;
 };
 
 /** Value used to decide whether to write or not to the registers **/

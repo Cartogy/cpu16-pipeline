@@ -7,22 +7,32 @@ IfDecReg<uint16_t> PFetchStage::exec(InstructionMemory<uint16_t> ins_mem, uint16
     IfDecReg<uint16_t> reg;
 
     reg.instruction = ins_mem.get_instruction(program_counter);
+    reg.pc_increment = program_counter + 1; // point to the next instruction.
+                                            
     // The beginning of the pipeline.
     reg.set_valid(true);
     return reg;
 }
 
+// DONE: Refactor pipeline stages
 DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDecReg<uint16_t> reg) {
     // Check instruction type
     // 1000|++++|++++|++++| -> I-Type
     // 0100|++++|++++|++++| -> R-Type
     // 0010|++++++++++++| -> J-Type
-    
+
     DecExecReg<uint16_t, uint16_t> dec_reg;
     dec_reg.set_valid(true);
+    /* Passing fields */
     dec_reg.control_op = reg.instruction;
-    dec_reg.value_one = 0;
-    dec_reg.value_two = 0;
+    dec_reg.pc_increment = reg.pc_increment;
+
+    
+    /* Default values */
+    dec_reg.reg_one = 0;
+    dec_reg.reg_two = 0;
+    dec_reg.imm_value = 0;
+    dec_reg.jmp_address = 0;
 
 
     if (0x8000 & reg.instruction) {
@@ -35,8 +45,8 @@ DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDec
             uint16_t base_index = ((0xf << 8) & reg.instruction) >> 8;
             uint16_t offset = 0xf & reg.instruction;
 
-            dec_reg.value_one = register_file[base_index];
-            dec_reg.value_two = offset;
+            dec_reg.reg_one = register_file[base_index];
+            dec_reg.imm_value = offset;
 
         } else {
             // Branches and stuff
@@ -44,8 +54,8 @@ DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDec
             uint16_t reg_one_index = ((0xf << 8) & reg.instruction) >> 8;
             uint16_t reg_two_index = ((0xf << 4) & reg.instruction) >> 4;
 
-            dec_reg.value_one = register_file[reg_one_index];
-            dec_reg.value_two = register_file[reg_two_index];
+            dec_reg.reg_one = register_file[reg_one_index];
+            dec_reg.reg_two = register_file[reg_two_index];
         }
 
         // Is I-Type
@@ -59,12 +69,12 @@ DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDec
         uint16_t reg_two_index = ((0xf << 4) & reg.instruction) >> 4;
 
         // Store in register.
-        dec_reg.value_one = register_file[reg_one_index];
-        dec_reg.value_two = register_file[reg_two_index];
+        dec_reg.reg_one = register_file[reg_one_index];
+        dec_reg.reg_two = register_file[reg_two_index];
 
     } else {
         uint16_t jump = 0x0fff & reg.instruction;
-        dec_reg.value_one = jump;
+        dec_reg.jmp_address = jump;
         std::cout << "J Instruction" << std::endl;
     }
 
@@ -72,16 +82,23 @@ DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDec
 }
 
 ExecMemReg<uint16_t, uint16_t> PExecStage::exec(DecExecReg<uint16_t, uint16_t> reg) {
+
+
+
     uint16_t op_code = ((0xf << 12) & reg.control_op) >> 12;
 
     ExecMemReg<uint16_t, uint16_t> exec_reg;
 
     exec_reg.set_valid(true);
+
+    /* Passing Values */
     exec_reg.control_op = reg.control_op;
+    exec_reg.write_back_address = reg.write_back_address;
     
     if (op_code & 0x8) {    // I type instruction
         if (op_code > 0x9) {
             if (op_code >= 0xc) {   // branching
+                // Do comparison
                 exec_reg.value = reg.value_one - reg.value_two;
             } else {        // immediate
                 if (op_code == 0xa) {       // addi
@@ -96,16 +113,16 @@ ExecMemReg<uint16_t, uint16_t> PExecStage::exec(DecExecReg<uint16_t, uint16_t> r
     }  else if (op_code & 0x4) {    // R-Type
         // Need to check bits 
         if (op_code == 0x4) {
-            exec_reg.value = reg.value_one + reg.value_two;
+            exec_reg.alu_value = reg.reg_one + reg.reg_two;
         } else if (op_code == 0x5) {
-            exec_reg.value = reg.value_one - reg.value_two;
+            exec_reg.alu_value = reg.reg_one - reg.reg_two;
         } else if (op_code == 0x6) {
-            exec_reg.value = reg.value_one * reg.value_two;
+            exec_reg.alu_value = reg.reg_one * reg.reg_two;
         } else {
-            exec_reg.value = reg.value_one / reg.value_two;
+            exec_reg.alu_value = reg.reg_one / reg.reg_two;
         }
     } else {    // J-Type
-        exec_reg.value = reg.value_one + 0;
+        exec_reg.branch_pc = reg.imm_value + 0;
     }
 
     return exec_reg;
