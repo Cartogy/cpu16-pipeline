@@ -148,6 +148,8 @@ The pipeline architecture is based on the 32-bit MIPS architecture.
 4. Memory
 5. Write Back
 
+This emulation does not implement solutions to *pipeline hazards*.
+
 
 ## Pipeline Registers
 
