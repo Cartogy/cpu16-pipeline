@@ -21,7 +21,8 @@ template<typename T, typename U>
 struct DecExecReg : PipelineRegister {
         T control_op;
         T pc_increment;
-        T write_back_address;
+        T imm_val;
+        T jmp_address;
         U read_one;
         U read_two;
         U dst_one_r;
@@ -31,18 +32,20 @@ struct DecExecReg : PipelineRegister {
 template <typename T, typename U>
 struct ExecMemReg : PipelineRegister {
         T control_op;
-        T branch_pc;    // either branched or PC+4
+        T jmp_address;
+        T pc_branch;    // either branched or PC+4
         T write_back_address;
+        U zero;
         U alu_value;
-        U write_reg_data;
+        U read_two;
 };
 
 template <typename T, typename U>
 struct MemWriteReg: PipelineRegister {
         T control_op;
         T write_back_address;
-        U data_read;
         U alu_value;
+        U data_out;
 };
 
 /** Value used to decide whether to write or not to the registers **/
@@ -52,6 +55,4 @@ struct UpdateArch {
     U value;
     T reg_index;
 };
-
-
 #endif
