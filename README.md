@@ -49,6 +49,34 @@
 * jmp =>  |0010|++++++++++++|
 * X   =>  |0011|++++++++++++|
 
+# Control Unit
+
+op code => |++++|
+
+The following are the signals to take into account:
+* ALUSrc
+* RegDst
+* RegWrite
+* Branch
+* MemWrite
+* MemRead
+* Jump
+* MemToReg
+* PCSrc
+
+* |01++| => ALUSrc=0,RegDst=0,RegWrite=1,Branch=0,MemWrite=0,MemRead=0,Jump=0,MemToReg=0, PCSrc=0
+
+* |10++| => ALUSrc=1,RegDst=1,RegWrite=1,Branch=0,Jump=0,PCSrc=0
+    - |1000| +=> MemRead=1,MemWrite=0,MemToReg=1    (LOAD)
+    - |1001| +=> MemRead=0, MemWrite=1,MemToReg=0   (STORE)
+    - |101+| +=> MemRead=0, MemWrite=0,MemToReg=0
+* |11++| => ALUSrc=0,RegDst=0,RegWrite=0,Branch=1,MemWrite=0,MemRead=0,Jump=0,MemToReg=0, PCSrc=0
+* |001+| => ALUSrc = 1,RegDst=0,RegWrite=1,Branch=0,MemWrite=0,MemRead=0,Jump=1,MemToReg=0,PCSrc=1
+
+## ALU Control
+
+This control unit determines the specific operator that the ALU will execute.
+
 # Architecture
 
 The central component is the **Emulator** that connects all the components required to emulate a Von Neumann Architecture CPU.

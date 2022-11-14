@@ -23,5 +23,6 @@ class ControlUnit16Test : public ::testing::Test {
 TEST_F(ControlUnit16Test, ControlOpZero) {
     ControlOp cop = control_unit.control_op(0);
     
-    EXPECT_EQ(zero,cop);
+    //EXPECT_EQ(zero,cop);
+    EXPECT_TRUE(zero == cop);
 }

@@ -73,6 +73,7 @@ ExecMemReg<uint16_t, uint16_t> PExecStage::exec(DecExecReg<uint16_t, uint16_t> r
 
     /* Passing Values */
     exec_reg.control_op = reg.control_op;
+    /*
     exec_reg.write_back_address = reg.write_back_address;
     
     if (op_code & 0x8) {    // I type instruction
@@ -104,6 +105,7 @@ ExecMemReg<uint16_t, uint16_t> PExecStage::exec(DecExecReg<uint16_t, uint16_t> r
     } else {    // J-Type
         exec_reg.branch_pc = reg.imm_value + 0;
     }
+    */
 
     return exec_reg;
 }
@@ -116,6 +118,7 @@ MemWriteReg<uint16_t, uint16_t> PMemStage::exec(Memory mem, ExecMemReg<uint16_t,
 
     // Check type of instruction
     // Either use memory or not depending if it is load/store.
+    /*
     if (op_code == 0x8) {   // load
         uint16_t val = mem.load(reg.value); 
     } else if (op_code == 0x9) {  // store
@@ -123,6 +126,6 @@ MemWriteReg<uint16_t, uint16_t> PMemStage::exec(Memory mem, ExecMemReg<uint16_t,
     } else {
         mem_reg.value = reg.value;
     }
-
+    */
     return mem_reg;
 }
