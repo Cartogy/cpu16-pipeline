@@ -29,61 +29,41 @@ DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDec
 
     
     /* Default values */
-    dec_reg.reg_one = 0;
-    dec_reg.reg_two = 0;
+    dec_reg.read_one = 0;
+    dec_reg.read_two = 0;
     dec_reg.imm_value = 0;
     dec_reg.jmp_address = 0;
+    dec_reg.dst_one_r = 0;
+    dec_reg.dst_two_i = 0;
 
+    /* Fill R-type instruction fields */
+    uint16_t reg_one = ((0xf << 8) & reg.instruction) >> 12;
+    uint16_t reg_two = ((0xf << 4) & reg.instruction) >> 8;
+    uint16_t dst_one_r = 0xf & reg.instruction;
 
-    if (0x8000 & reg.instruction) {
-        // Implement Memory instructions.
-        uint16_t top_four_bits = (0xf000 & reg.instruction) >> 12;
-        // 0xc -> 12
-        // All instructions under 12 sstore the same pattern.
-        if (top_four_bits < 0xc) {  // Load/Store and immediate
-            // acquire base address
-            uint16_t base_index = ((0xf << 8) & reg.instruction) >> 8;
-            uint16_t offset = 0xf & reg.instruction;
+    /* Fill R-type instruction fields */
+    uint16_t imm_value = 0xf & reg.instruction;
+    uint16_t dst_two_i = (0xf << 4) & reg.instruction;
 
-            dec_reg.reg_one = register_file[base_index];
-            dec_reg.imm_value = offset;
+    /* Fill J-type instruction fields */
+    uint16_t jmp_address = 0xfff & reg.instruction;
 
-        } else {
-            // Branches and stuff
-            /* Branches for now */
-            uint16_t reg_one_index = ((0xf << 8) & reg.instruction) >> 8;
-            uint16_t reg_two_index = ((0xf << 4) & reg.instruction) >> 4;
+    // R-Type
+    dec_reg.read_one = reg_one;
+    dec_reg.read_two = reg_two;
+    dec_reg.dst_one_r = dst_one_r;
 
-            dec_reg.reg_one = register_file[reg_one_index];
-            dec_reg.reg_two = register_file[reg_two_index];
-        }
+    // I-Type
+    dec_reg.imm_value = imm_value;
+    dec_reg.dst_two_i = dst_two_i;
 
-        // Is I-Type
-        std::cout << "I Instruction" << std::endl;
-    } else if (0x4000 & reg.instruction) {
-        std::cout << "R Instruction" << std::endl;
-        // Acquire reg index from instruction.
-        // Src 1
-        uint16_t reg_one_index = ((0xf << 8) & reg.instruction) >> 8;
-        // Src 2
-        uint16_t reg_two_index = ((0xf << 4) & reg.instruction) >> 4;
-
-        // Store in register.
-        dec_reg.reg_one = register_file[reg_one_index];
-        dec_reg.reg_two = register_file[reg_two_index];
-
-    } else {
-        uint16_t jump = 0x0fff & reg.instruction;
-        dec_reg.jmp_address = jump;
-        std::cout << "J Instruction" << std::endl;
-    }
+    // J-Type
+    dec_reg.jmp_address = jmp_address;
 
     return dec_reg;
 }
 
 ExecMemReg<uint16_t, uint16_t> PExecStage::exec(DecExecReg<uint16_t, uint16_t> reg) {
-
-
 
     uint16_t op_code = ((0xf << 12) & reg.control_op) >> 12;
 

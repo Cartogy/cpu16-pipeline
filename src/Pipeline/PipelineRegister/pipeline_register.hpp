@@ -21,7 +21,7 @@ template<typename T, typename U>
 struct DecExecReg : PipelineRegister {
         T control_op;
         T pc_increment;
-        T imm_val;
+        T imm_value;
         T jmp_address;
         U read_one;
         U read_two;
