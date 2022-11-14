@@ -22,10 +22,10 @@ struct DecExecReg : PipelineRegister {
         T control_op;
         T pc_increment;
         T write_back_address;
-        U reg_one;
-        U reg_two;
-        U imm_value;
-        U jmp_address;
+        U read_one;
+        U read_two;
+        U dst_one_r;
+        U dst_two_i;
 };
 
 template <typename T, typename U>
