@@ -192,21 +192,31 @@ In the *fetch* stage, there is one decision to make:
 #### Selecting ALU Value
 ![Microarchitecture Pipeline Exec ALU Value](images/2_exec_ins_info.png)
 
+The Multiplexor selects either the *immediate value* from the **I-Category** or the *read data* from the **R-Category**.
+
 #### Register Destination Address
 ![Microarchitecture Pipeline Exec ALU Value](images/3_exec_dst_info.png)
+
+The Multiplexor selects either the *dst* from **I-Category** or the **R-Category**.
 
 #### Jump Address Addition
 ![Microarchitecture Pipeline Exec ALU Value](images/4_exec_add_jump_info.png)
 
+The ALU Sum adds the *PC+4* with the *jump address* from the **J-Category**.
+
 ## Memory Write
 
-#### Jump Address Addition
+#### Branch or Jump Memory Address
 ![Microarchitecture Pipeline Exec ALU Value](images/5_exec_jump_branch_info.png)
+
+Selects either the *jump address* or the *Branching address*.
 
 ## Write Stage
 
 #### Write Data
-![Microarchitecture Pipeline Exec ALU Value](images/6_write_read_data.png)
+![Microarchitecture Pipeline Exec ALU Value](images/6_write_reg_data.png)
+
+Stores either the ALU value from **R-Category** or the value from *loaded* from memory **I-Category**.
 
 ## Pipeline Registers
 
