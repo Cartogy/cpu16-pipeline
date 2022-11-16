@@ -5,6 +5,7 @@
 struct ExecOp {
     uint16_t alu_src;
     uint16_t reg_dst;
+    uint16_t pc_src;
 
     public:
         bool operator==(const ExecOp& other) {

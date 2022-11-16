@@ -70,7 +70,7 @@ The following are the signals to take into account:
     - |1000| +=> MemRead=1,MemWrite=0,MemToReg=1    (LOAD)
     - |1001| +=> MemRead=0, MemWrite=1,MemToReg=0   (STORE)
     - |101+| +=> MemRead=0, MemWrite=0,MemToReg=0
-* |11++| => ALUSrc=0,RegDst=0,RegWrite=0,Branch=1,MemWrite=0,MemRead=0,Jump=0,MemToReg=0, PCSrc=0
+* |11++| => ALUSrc=0,RegDst=0,RegWrite=0,Branch=1,MemWrite=0,MemRead=0,Jump=0,MemToReg=0, PCSrc=1
 * |001+| => ALUSrc = 1,RegDst=0,RegWrite=1,Branch=0,MemWrite=0,MemRead=0,Jump=1,MemToReg=0,PCSrc=1
 
 ## ALU Control
