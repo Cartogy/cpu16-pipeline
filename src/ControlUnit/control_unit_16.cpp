@@ -6,6 +6,9 @@ ControlOp ControlUnit16::control_op(uint16_t op) {
     struct MemOp mem_op;
     struct WriteOp write_op;
 
+    // default for write
+    write_op.mem_to_reg = 0;
+    write_op.reg_write = 0;
 
     if (op >= ((2*2*2)+(2*2)) ) {   // 1100
         exec_op.alu_src = 0;
@@ -25,7 +28,9 @@ ControlOp ControlUnit16::control_op(uint16_t op) {
         mem_op.branch = 0;
         mem_op.jmp = 0;
 
+        write_op.reg_write = 1;
         write_op.mem_to_reg = 0;
+
         // Check if load/store
         if (op == 0x8) {    // LOAD
             mem_op.mem_read = 1;
@@ -43,6 +48,8 @@ ControlOp ControlUnit16::control_op(uint16_t op) {
         mem_op.mem_read = 0;
         mem_op.branch = 0;
         mem_op.jmp = 0;
+
+        write_op.reg_write = 1;
     } else {                    // 0010
         exec_op.alu_src = 1;
         exec_op.reg_dst = 0;
@@ -51,6 +58,7 @@ ControlOp ControlUnit16::control_op(uint16_t op) {
         mem_op.mem_read = 0;
         mem_op.branch = 0;
         mem_op.jmp = 1;
+
     }
 
     // The PCSrc is passed to the Fetch Stage after execution.

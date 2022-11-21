@@ -5,7 +5,7 @@
 struct ExecOp {
     uint16_t alu_src;
     uint16_t reg_dst;
-    uint16_t pc_src;
+//    uint16_t pc_src; the pc_source is determined by logic gates. (See diagram)
 
     public:
         bool operator==(const ExecOp& other) {
@@ -29,9 +29,10 @@ struct MemOp {
 
 struct WriteOp {
     uint16_t mem_to_reg;
+    uint16_t reg_write;
     public:
         bool operator==(const WriteOp& other) {
-            return mem_to_reg == other.mem_to_reg;
+            return mem_to_reg == other.mem_to_reg && reg_write == other.reg_write;
         }
 };
 
