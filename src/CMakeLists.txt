@@ -8,5 +8,6 @@ add_subdirectory(Pipeline)
 add_subdirectory(InstructionMemory)
 add_subdirectory(Memory)
 add_subdirectory(ControlUnit)
+add_subdirectory(ALU)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC StateElements)
