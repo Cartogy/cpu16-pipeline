@@ -2,6 +2,7 @@
 #define PIPELINE_STAGE
 #include <memory>
 
+#include "ControlUnit/control_unit_16.hpp"
 #include "InstructionMemory/instruction_memory.hpp"
 #include "PipelineRegister/pipeline_register.hpp"
 #include "Memory/memory.hpp"
@@ -17,7 +18,7 @@ class PFetchStage : public PipelineStage {
 
 class PDecodeStage : public PipelineStage {
     public:
-        DecExecReg<uint16_t, uint16_t> exec(uint16_t *register_file, IfDecReg<uint16_t> reg);
+        DecExecReg<uint16_t, uint16_t> exec(uint16_t *register_file, IfDecReg<uint16_t> reg, const ControlUnit16& control_unit);
 };
 
 class PExecStage : public PipelineStage {

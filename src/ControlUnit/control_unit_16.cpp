@@ -1,7 +1,10 @@
 #include "control_unit_16.hpp"
 
 /* Takes only the op-code */
-ControlOp ControlUnit16::control_op(uint16_t op) {
+ControlOp ControlUnit16::control_op(uint16_t ins) const {
+
+    uint16_t op = ((0xf << 12) & ins) >> 12;
+
     struct ExecOp exec_op;
     struct MemOp mem_op;
     struct WriteOp write_op;

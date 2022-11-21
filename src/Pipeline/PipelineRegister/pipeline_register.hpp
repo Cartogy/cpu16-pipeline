@@ -1,5 +1,8 @@
 #ifndef PIPELINE_REGISTER
 #define PIPELINE_REGISTER
+
+#include "ControlUnit/control_unit_16.hpp"
+
 /* pipeline Registers for a Pipeline Architecture */
 
 struct PipelineRegister {
@@ -19,7 +22,10 @@ struct IfDecReg : PipelineRegister {
 
 template<typename T, typename U>
 struct DecExecReg : PipelineRegister {
-        T control_op;
+        ExecOp exec_op;
+        MemOp mem_op;
+        WriteOp write_op;
+
         T pc_increment;
         T imm_value;
         T jmp_address;
@@ -31,7 +37,9 @@ struct DecExecReg : PipelineRegister {
 
 template <typename T, typename U>
 struct ExecMemReg : PipelineRegister {
-        T control_op;
+        MemOp mem_op;
+        WriteOp write_op;
+
         T jmp_address;
         T pc_branch;    // either branched or PC+4
         T write_back_address;
@@ -42,6 +50,8 @@ struct ExecMemReg : PipelineRegister {
 
 template <typename T, typename U>
 struct MemWriteReg: PipelineRegister {
+        WriteOp write_op;
+
         T control_op;
         T write_back_address;
         U alu_value;

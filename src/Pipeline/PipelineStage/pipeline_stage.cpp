@@ -15,7 +15,7 @@ IfDecReg<uint16_t> PFetchStage::exec(InstructionMemory<uint16_t> ins_mem, uint16
 }
 
 // DONE: Refactor pipeline stages
-DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDecReg<uint16_t> reg) {
+DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDecReg<uint16_t> reg, const ControlUnit16& control) {
     // Check instruction type
     // 1000|++++|++++|++++| -> I-Type
     // 0100|++++|++++|++++| -> R-Type
@@ -24,7 +24,6 @@ DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDec
     DecExecReg<uint16_t, uint16_t> dec_reg;
     dec_reg.set_valid(true);
     /* Passing fields */
-    dec_reg.control_op = reg.instruction;
     dec_reg.pc_increment = reg.pc_increment;
 
     
@@ -59,6 +58,12 @@ DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDec
 
     // J-Type
     dec_reg.jmp_address = jmp_address;
+
+    // Fill in the control op
+    ControlOp control_op = control.control_op(reg.instruction);
+    dec_reg.exec_op = control_op.exec_op;
+    dec_reg.mem_op = control_op.mem_op;
+    dec_reg.write_op = control_op.write_op;
 
     return dec_reg;
 }

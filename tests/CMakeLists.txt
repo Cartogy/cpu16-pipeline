@@ -13,7 +13,7 @@ target_link_libraries(instruction_memory_test GTest::gtest_main InstructionMemor
 target_link_libraries(pipeline_stage_test GTest::gtest_main InstructionMemory PipelineStage PipelineRegister StateElements Memory)
 target_link_libraries(memory_test GTest::gtest_main Memory)
 target_link_libraries(control_op_test GTest::gtest_main ControlUnit)
-target_link_libraries(alu16_test GTest::gtest_main ALU)
+target_link_libraries(alu16_test GTest::gtest_main ALU ControlUnit)
 
 target_include_directories(state_elements_test PUBLIC "${PROJECT_SOURCE_DIR}/src/")
 

@@ -3,6 +3,7 @@
 
 #include "InstructionMemory/instruction_memory.hpp"
 #include "PipelineRegister/pipeline_register.hpp"
+#include "ControlUnit/control_unit_16.hpp"
 #include "PipelineStage/pipeline_stage.hpp"
 #include "StateElements/state_elements.hpp"
 #include "Memory/memory.hpp"
@@ -12,6 +13,8 @@ class PipelineStageTest : public ::testing::Test {
         InstructionMemory<uint16_t> ins_mem;
         Memory mem;
         StateElements se;
+        ControlUnit16 cu;
+
 
         uint16_t add_ins = 0x4012;
         uint16_t sub_ins = 0x5012;
@@ -53,6 +56,13 @@ TEST_F(PipelineStageTest, FetchStage) {
 
 TEST_F(PipelineStageTest, DecodeStageRCategory) {
     PDecodeStage decode_stage;
+
+    //TODO: Implement OP Tests...
+    ExecOp exec_op;
+    exec_op.alu_src;
+
+    MemOp mem_op;
+    WriteOp write_op;
 
     // setup fetch register pipeline
     IfDecReg<uint16_t> fetch_reg;

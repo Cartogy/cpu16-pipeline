@@ -1,3 +1,5 @@
+#ifndef CONTORL_UNIT_16
+#define CONTORL_UNIT_16
 #include <cstdint>
 #include <memory>
 #include "control_unit.hpp"
@@ -45,14 +47,12 @@ struct ControlOp {
         bool operator==(const ControlOp& other) {
             return exec_op == other.exec_op && write_op ==  other.write_op && mem_op == other.mem_op;
         }
-        
-
 };
 
 class ControlUnit16 : public ControlUnit<uint16_t, ControlOp> {
     public:
-        ControlOp control_op(uint16_t ins);
-
+        ControlUnit16();
+        ControlOp control_op(uint16_t ins) const;
 };
 
-
+#endif
