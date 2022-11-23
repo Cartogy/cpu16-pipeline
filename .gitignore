@@ -3,5 +3,6 @@ compile_commands.json
 CMakeFiles/*
 CMakeCache.txt
 .cache/*
+.ccls-cache/*
 
 TODO.md
