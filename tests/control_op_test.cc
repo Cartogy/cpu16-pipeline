@@ -51,7 +51,7 @@ TEST_F(ControlUnit16Test, ControlOpJCategory) {
 
 TEST_F(ControlUnit16Test, ControlOpRCategoryAdd) {
 
-    uint16_t add_op = 0x4;
+    uint16_t add_op = 0x4000;
 
     ControlOp cop = control_unit.control_op(add_op);
     
@@ -81,7 +81,7 @@ TEST_F(ControlUnit16Test, ControlOpRCategoryAdd) {
 
 TEST_F(ControlUnit16Test, ControlOpICategoryLoad) {
 
-    uint16_t load_op = 0x8;
+    uint16_t load_op = 0x8000;
 
     ControlOp cop = control_unit.control_op(load_op);
     
@@ -111,7 +111,7 @@ TEST_F(ControlUnit16Test, ControlOpICategoryLoad) {
 
 TEST_F(ControlUnit16Test, ControlOpICategoryStore) {
 
-    uint16_t store_op = 0x9;
+    uint16_t store_op = 0x9000;
 
     ControlOp cop = control_unit.control_op(store_op);
     
@@ -141,7 +141,7 @@ TEST_F(ControlUnit16Test, ControlOpICategoryStore) {
 
 TEST_F(ControlUnit16Test, ControlOpICategoryAddImm) {
 
-    uint16_t addi_op = 0xa;
+    uint16_t addi_op = 0xa000;
 
     ControlOp cop = control_unit.control_op(addi_op);
     
@@ -171,7 +171,7 @@ TEST_F(ControlUnit16Test, ControlOpICategoryAddImm) {
 
 TEST_F(ControlUnit16Test, ControlOpICategorySubImm) {
 
-    uint16_t subi_op = 0xb;
+    uint16_t subi_op = 0xb000;
 
     ControlOp cop = control_unit.control_op(subi_op);
     
@@ -201,7 +201,7 @@ TEST_F(ControlUnit16Test, ControlOpICategorySubImm) {
 
 TEST_F(ControlUnit16Test, ControlOpICategoryBranch) {
 
-    uint16_t beq_op = 0xc;
+    uint16_t beq_op = 0xc000;
 
     ControlOp cop = control_unit.control_op(beq_op);
     

@@ -51,7 +51,6 @@ struct ControlOp {
 
 class ControlUnit16 : public ControlUnit<uint16_t, ControlOp> {
     public:
-        ControlUnit16();
         ControlOp control_op(uint16_t ins) const;
 };
 

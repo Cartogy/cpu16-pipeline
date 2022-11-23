@@ -1,3 +1,6 @@
+#ifndef _ALU16
+#define _ALU16
+
 #include "alu.hpp"
 #include <memory>
 
@@ -9,3 +12,5 @@ class ALU16 : public ALU<uint16_t, ALU16Ops> {
 
         static ALU16Ops alu_op(uint16_t op_code);
 };
+
+#endif

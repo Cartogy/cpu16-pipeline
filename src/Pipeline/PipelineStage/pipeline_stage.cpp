@@ -34,10 +34,12 @@ DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDec
     dec_reg.jmp_address = 0;
     dec_reg.dst_one_r = 0;
     dec_reg.dst_two_i = 0;
+    /* Fill Opcode */
+    uint16_t op_code = ((0xf << 12) & reg.instruction) >> 12;
 
     /* Fill R-type instruction fields */
-    uint16_t reg_one = ((0xf << 8) & reg.instruction) >> 12;
-    uint16_t reg_two = ((0xf << 4) & reg.instruction) >> 8;
+    uint16_t reg_one = ((0xf << 8) & reg.instruction) >> 8;
+    uint16_t reg_two = ((0xf << 4) & reg.instruction) >> 4;
     uint16_t dst_one_r = 0xf & reg.instruction;
 
     /* Fill R-type instruction fields */
@@ -47,9 +49,12 @@ DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDec
     /* Fill J-type instruction fields */
     uint16_t jmp_address = 0xfff & reg.instruction;
 
+    /* Opcode */
+    dec_reg.op_code = op_code;
+
     // R-Type
-    dec_reg.read_one = reg_one;
-    dec_reg.read_two = reg_two;
+    dec_reg.read_one = register_file[reg_one];
+    dec_reg.read_two = register_file[reg_two];
     dec_reg.dst_one_r = dst_one_r;
 
     // I-Type
@@ -68,49 +73,44 @@ DecExecReg<uint16_t, uint16_t> PDecodeStage::exec(uint16_t *register_file, IfDec
     return dec_reg;
 }
 
-ExecMemReg<uint16_t, uint16_t> PExecStage::exec(DecExecReg<uint16_t, uint16_t> reg) {
+ExecMemReg<uint16_t, uint16_t> PExecStage::exec(DecExecReg<uint16_t, uint16_t> reg, const ALU16& alu) {
 
-    uint16_t op_code = ((0xf << 12) & reg.control_op) >> 12;
+    uint16_t value_one = reg.read_one;
+    uint16_t value_two = 0;
+
+    // ALU 2nd Input.
+    if (reg.exec_op.alu_src == 1) {
+        value_two = reg.imm_value;
+    } else {
+        value_two = reg.read_two;
+    }
+
+    // RegtoDst
+    uint16_t reg_dst = 0;
+    if (reg.exec_op.reg_dst == 0) {
+        reg_dst = reg.dst_one_r;
+    } else {
+        reg_dst = reg.dst_two_i;
+    }
+
+    uint16_t branched_address = reg.imm_value + reg.pc_increment;
 
     ExecMemReg<uint16_t, uint16_t> exec_reg;
 
-    exec_reg.set_valid(true);
-
     /* Passing Values */
-    exec_reg.control_op = reg.control_op;
-    /*
-    exec_reg.write_back_address = reg.write_back_address;
-    
-    if (op_code & 0x8) {    // I type instruction
-        if (op_code > 0x9) {
-            if (op_code >= 0xc) {   // branching
-                // Do comparison
-                exec_reg.value = reg.value_one - reg.value_two;
-            } else {        // immediate
-                if (op_code == 0xa) {       // addi
-                    exec_reg.value = reg.value_one + reg.value_two;
-                } else {                    // subi (0xb)
-                    exec_reg.value = reg.value_one - reg.value_two;
-                }
-            }
-        } else {    // load/store instructions
-            exec_reg.value = reg.value_one + reg.value_two;
-        }
-    }  else if (op_code & 0x4) {    // R-Type
-        // Need to check bits 
-        if (op_code == 0x4) {
-            exec_reg.alu_value = reg.reg_one + reg.reg_two;
-        } else if (op_code == 0x5) {
-            exec_reg.alu_value = reg.reg_one - reg.reg_two;
-        } else if (op_code == 0x6) {
-            exec_reg.alu_value = reg.reg_one * reg.reg_two;
-        } else {
-            exec_reg.alu_value = reg.reg_one / reg.reg_two;
-        }
-    } else {    // J-Type
-        exec_reg.branch_pc = reg.imm_value + 0;
-    }
-    */
+    exec_reg.mem_op = reg.mem_op;
+    exec_reg.write_op = reg.write_op;
+    exec_reg.jmp_address = reg.jmp_address;
+    exec_reg.read_two = reg.read_two;
+
+    exec_reg.write_back_address = reg_dst;
+    exec_reg.zero = value_one - value_two;
+    exec_reg.pc_branch = branched_address;
+
+    uint16_t alu_value = alu.compute(value_one, value_two, ALU16::alu_op(reg.op_code));
+    exec_reg.alu_value = alu_value;
+
+    exec_reg.set_valid(true);
 
     return exec_reg;
 }
@@ -118,6 +118,7 @@ ExecMemReg<uint16_t, uint16_t> PExecStage::exec(DecExecReg<uint16_t, uint16_t> r
 MemWriteReg<uint16_t, uint16_t> PMemStage::exec(Memory mem, ExecMemReg<uint16_t, uint16_t> reg) {
     MemWriteReg<uint16_t, uint16_t> mem_reg;
     mem_reg.set_valid(true);
+
 
     uint16_t op_code = ((0xf << 12) & mem_reg.control_op) >> 12;
 

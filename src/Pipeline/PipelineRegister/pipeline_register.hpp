@@ -29,6 +29,7 @@ struct DecExecReg : PipelineRegister {
         T pc_increment;
         T imm_value;
         T jmp_address;
+        T op_code;
         U read_one;
         U read_two;
         U dst_one_r;

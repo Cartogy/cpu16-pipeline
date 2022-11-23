@@ -6,6 +6,7 @@
 #include "InstructionMemory/instruction_memory.hpp"
 #include "PipelineRegister/pipeline_register.hpp"
 #include "Memory/memory.hpp"
+#include "ALU/alu_16.hpp"
 
 class PipelineStage {
 };
@@ -23,7 +24,7 @@ class PDecodeStage : public PipelineStage {
 
 class PExecStage : public PipelineStage {
     public:
-        ExecMemReg<uint16_t, uint16_t> exec(DecExecReg<uint16_t, uint16_t> reg);
+        ExecMemReg<uint16_t, uint16_t> exec(DecExecReg<uint16_t, uint16_t> reg, const ALU16& alu);
 };
 
 class PMemStage : public PipelineStage {
