@@ -115,12 +115,43 @@ ExecMemReg<uint16_t, uint16_t> PExecStage::exec(DecExecReg<uint16_t, uint16_t> r
     return exec_reg;
 }
 
-MemWriteReg<uint16_t, uint16_t> PMemStage::exec(Memory mem, ExecMemReg<uint16_t, uint16_t> reg) {
+std::tuple<MemWriteReg<uint16_t, uint16_t>, uint16_t, uint16_t> PMemStage::exec(Memory mem, ExecMemReg<uint16_t, uint16_t> reg) {
     MemWriteReg<uint16_t, uint16_t> mem_reg;
     mem_reg.set_valid(true);
 
 
     uint16_t op_code = ((0xf << 12) & mem_reg.control_op) >> 12;
+    // pass values
+    mem_reg.write_op = reg.write_op;
+    mem_reg.write_back_address = reg.write_back_address;
+    mem_reg.alu_value = reg.alu_value;
+
+    // Memory Access
+    if (reg.mem_op.mem_read) {
+        mem_reg.data_out = mem.load(mem_reg.alu_value);
+    }
+    if (reg.mem_op.mem_write) {
+        mem.store(reg.alu_value, reg.read_two);
+    }
+
+    /* Branch/Jump Address */
+    bool valid_branch = reg.mem_op.branch && (reg.zero == 0);
+
+    // Determine PCSrc
+    uint16_t pc_src = 0;
+    if (valid_branch || reg.mem_op.jmp > 0) {
+        pc_src = 1;
+    }
+
+    // Determine branch or jump
+    uint16_t next_instruction = 0;
+    if (reg.mem_op.jmp == 0) {
+        next_instruction = reg.pc_branch;
+    } else {
+        next_instruction = reg.jmp_address;
+    }
+
+    /* Output PCSrc and branched address */
 
     // Check type of instruction
     // Either use memory or not depending if it is load/store.
@@ -133,5 +164,5 @@ MemWriteReg<uint16_t, uint16_t> PMemStage::exec(Memory mem, ExecMemReg<uint16_t,
         mem_reg.value = reg.value;
     }
     */
-    return mem_reg;
+    return {mem_reg, pc_src, next_instruction};
 }

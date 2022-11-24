@@ -29,7 +29,7 @@ class PExecStage : public PipelineStage {
 
 class PMemStage : public PipelineStage {
     public:
-        MemWriteReg<uint16_t, uint16_t> exec(Memory mem, ExecMemReg<uint16_t, uint16_t> reg);
+        std::tuple<MemWriteReg<uint16_t, uint16_t>, uint16_t, uint16_t> exec(Memory mem, ExecMemReg<uint16_t, uint16_t> reg);
 };
 
 #endif
