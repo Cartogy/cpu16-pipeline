@@ -326,7 +326,7 @@ TEST_F(PipelineStageTest, ExecStageJCategory) {
 }
 
 /** Memory Stage **/
-TEST_F(PipelineStageTest, MemoryStageRCategory) {
+TEST_F(PipelineStageTest, MemoryStageRCategoryAdd) {
     PMemStage mem_stage;
 
     ExecMemReg<uint16_t, uint16_t> exec_reg;
@@ -338,6 +338,7 @@ TEST_F(PipelineStageTest, MemoryStageRCategory) {
     exec_reg.write_op = cop.write_op;
 
     exec_reg.alu_value = 6;
+    exec_reg.write_back_address = 2;
 
     std::tuple<MemWriteReg<uint16_t, uint16_t>, uint16_t, uint16_t> reg_pcsrc_nextins = mem_stage.exec(mem, exec_reg);
 
@@ -348,13 +349,34 @@ TEST_F(PipelineStageTest, MemoryStageRCategory) {
     uint16_t pc_src = 0;
     EXPECT_EQ(pc_src, std::get<1>(reg_pcsrc_nextins));
 
-    /** Sub instruction **/
-/*    exec_reg.control_op = sub_ins;
+    EXPECT_EQ(2, std::get<0>(reg_pcsrc_nextins).write_back_address);
+}
+
+TEST_F(PipelineStageTest, MemoryStageRCategorySub) {
+    PMemStage mem_stage;
+
+    ExecMemReg<uint16_t, uint16_t> exec_reg;
+    exec_reg.set_valid(true);
+
+    // Prepare control op
+    ControlOp cop = cu.control_op(sub_ins);
+    exec_reg.mem_op = cop.mem_op;
+    exec_reg.write_op = cop.write_op;
+
+    // Prepare register values
     exec_reg.alu_value = 2;
+    exec_reg.write_back_address = 2;
 
-    reg = mem_stage.exec(mem, exec_reg);
+    // Execute stage
+    std::tuple<MemWriteReg<uint16_t, uint16_t>, uint16_t, uint16_t> reg_pcsrc_nextins = mem_stage.exec(mem, exec_reg);
 
-    EXPECT_EQ(sub_ins, reg.control_op);
-    EXPECT_EQ(2, reg.alu_value);
-    */
+    /* Testing */
+    EXPECT_TRUE(cop.write_op == std::get<0>(reg_pcsrc_nextins).write_op);
+
+    EXPECT_EQ(2, std::get<0>(reg_pcsrc_nextins).alu_value);
+
+    uint16_t pc_src = 0;
+    EXPECT_EQ(pc_src, std::get<1>(reg_pcsrc_nextins));
+
+    EXPECT_EQ(2, std::get<0>(reg_pcsrc_nextins).write_back_address);
 }
