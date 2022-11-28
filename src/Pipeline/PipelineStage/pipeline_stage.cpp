@@ -166,3 +166,25 @@ std::tuple<MemWriteReg<uint16_t, uint16_t>, uint16_t, uint16_t> PMemStage::exec(
     */
     return {mem_reg, pc_src, next_instruction};
 }
+
+UpdateArch<uint16_t, uint16_t> PWriteStage::exec(MemWriteReg<uint16_t, uint16_t> reg) {
+    UpdateArch<uint16_t, uint16_t> updated_values;
+
+    // Check Write control op
+    if (reg.write_op.reg_write) {
+        updated_values.write = true;
+    } else {
+        updated_values.write = false;
+    }
+
+    // Data from ALU or Memory
+    if (reg.write_op.mem_to_reg == 0) {
+        updated_values.value = reg.alu_value;
+    } else {
+        updated_values.value = reg.data_out;
+    }
+
+    updated_values.reg_index = reg.write_back_address;
+
+    return updated_values;
+}
