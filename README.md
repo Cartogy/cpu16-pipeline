@@ -34,7 +34,7 @@
 
                            base dst     offset
 * Load            => |1000|++++|++++|++++|
-                           base  reg offset
+                           base reg offset
 * Store           => |1001|++++|++++|++++|
                            src  dst  imm
 * Addi            => |1010|++++|++++|++++|
@@ -48,6 +48,34 @@
 
 * jmp =>  |0010|++++++++++++|
 * X   =>  |0011|++++++++++++|
+
+# Control Unit
+
+op code => |++++|
+
+The following are the signals to take into account:
+* ALUSrc
+* RegDst
+* RegWrite
+* Branch
+* MemWrite
+* MemRead
+* Jump
+* MemToReg
+* PCSrc
+
+* |01++| => ALUSrc=0,RegDst=0,RegWrite=1,Branch=0,MemWrite=0,MemRead=0,Jump=0,MemToReg=0, PCSrc=0
+
+* |10++| => ALUSrc=1,RegDst=1,RegWrite=1,Branch=0,Jump=0,PCSrc=0
+    - |1000| +=> MemRead=1,MemWrite=0,MemToReg=1    (LOAD)
+    - |1001| +=> MemRead=0, MemWrite=1,MemToReg=0   (STORE)
+    - |101+| +=> MemRead=0, MemWrite=0,MemToReg=0
+* |11++| => ALUSrc=0,RegDst=0,RegWrite=0,Branch=1,MemWrite=0,MemRead=0,Jump=0,MemToReg=0, PCSrc=1
+* |001+| => ALUSrc = 1,RegDst=0,RegWrite=1,Branch=0,MemWrite=0,MemRead=0,Jump=1,MemToReg=0,PCSrc=1
+
+## ALU Control
+
+This control unit determines the specific operator that the ALU will execute.
 
 # Architecture
 
@@ -67,6 +95,7 @@ The **Emulator16** provides a set of possible operations that the cpu can execut
 These operators are stored in a **OperatorTable**.
 
 ![Emulator Diagram](Emulator16.drawio.png)
+
 
 ## OperatorTable
 An **OperatorTable** is a *map* to all the possible operations that the cpu can execute.
@@ -106,7 +135,7 @@ It does so by implementing three components:
 
 The Tokenizer has the following type:
 
-$$Tokenizer: filePath \to [TokenLine] $$
+$$Tokenizer: filePath \to [TokenLine]$$
 
 The *TokenLine* is a set of **Tokens** the represent a line in source assembly code.
 
@@ -130,13 +159,16 @@ For this specific instance, the *MachineCode* is in a *uint16_t* format.
 
 With these three components, we can chain them together as follows:
 
-$$MachineCodeGenerator(Parser(Tokenizer(\text{``file-path"})))$$
+$$MachineCodeGenerator(Parser(Tokenizer(\text{"file-path"})))$$
 
 With a list of machine code instructions, we can add these instructions to the **InstructionMemory**.
 This is demonstrated in the **Emulator** implementation.
 
 The benefit of this functional approach is that we are able to isolate each component in order to test their functionality; isolating the bugs to their respective components.
+
 # Pipeline Architecture
+
+![Microarchitecture Pipeline](micro_arch_pipeline.png)
 
 The pipeline architecture is based on the 32-bit MIPS architecture.
 
@@ -145,6 +177,46 @@ The pipeline architecture is based on the 32-bit MIPS architecture.
 3. Execute
 4. Memory
 5. Write Back
+
+This emulation does not implement solutions to *pipeline hazards*.
+
+## Fetch Stage
+
+![Microarchitecture Pipeline Fetch Decision](images/1_fetch_info.png)
+
+In the *fetch* stage, there is one decision to make:
+* Either to use the next instruction address or the *branch/jump* instruction address.
+
+## Exec Stage
+
+#### Selecting ALU Value
+![Microarchitecture Pipeline Exec ALU Value](images/2_exec_ins_info.png)
+
+The Multiplexor selects either the *immediate value* from the **I-Category** or the *read data* from the **R-Category**.
+
+#### Register Destination Address
+![Microarchitecture Pipeline Exec ALU Value](images/3_exec_dst_info.png)
+
+The Multiplexor selects either the *dst* from **I-Category** or the **R-Category**.
+
+#### Jump Address Addition
+![Microarchitecture Pipeline Exec ALU Value](images/4_exec_add_jump_info.png)
+
+The ALU Sum adds the *PC+4* with the *jump address* from the **J-Category**.
+
+## Memory Write
+
+#### Branch or Jump Memory Address
+![Microarchitecture Pipeline Exec ALU Value](images/5_exec_jump_branch_info.png)
+
+Selects either the *jump address* or the *Branching address*.
+
+## Write Stage
+
+#### Write Data
+![Microarchitecture Pipeline Exec ALU Value](images/6_write_reg_data.png)
+
+Stores either the ALU value from **R-Category** or the value from *loaded* from memory **I-Category**.
 
 ## Pipeline Registers
 
@@ -183,11 +255,11 @@ This register contains the following data:
 * zero
 * ALU result
 * read reg two
-* Write address register
+* Write address/instruction
 
 ### Mem/WB Register
 
 This register contains the following data:
 * Read data
 * ALU result
-* Write address register
+* Write address/instruction
