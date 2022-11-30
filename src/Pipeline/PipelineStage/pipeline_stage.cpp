@@ -131,6 +131,7 @@ std::tuple<MemWriteReg<uint16_t, uint16_t>, uint16_t, uint16_t> PMemStage::exec(
         mem_reg.data_out = mem.load(mem_reg.alu_value);
     }
     if (reg.mem_op.mem_write) {
+        // store value from read_two to the address pointed to by alu_value
         mem.store(reg.alu_value, reg.read_two);
     }
 

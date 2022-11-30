@@ -381,6 +381,37 @@ TEST_F(PipelineStageTest, MemoryStageRCategorySub) {
     EXPECT_EQ(2, std::get<0>(reg_pcsrc_nextins).write_back_address);
 }
 
+/** I-Category Memory stage test **/
+TEST_F(PipelineStageTest, MemoryStageICategoryLoad) {
+    PMemStage mem_stage;
+
+    ExecMemReg<uint16_t, uint16_t> exec_reg;
+    exec_reg.set_valid(true);
+
+    // Prepare control op
+    ControlOp cop = cu.control_op(load_ins);
+    exec_reg.mem_op = cop.mem_op;
+    exec_reg.write_op = cop.write_op;
+
+    exec_reg.alu_value = 7;
+    exec_reg.write_back_address = 1;
+
+    // Execute stage
+    std::tuple<MemWriteReg<uint16_t, uint16_t>, uint16_t, uint16_t> reg_pcsrc_nextins = mem_stage.exec(mem, exec_reg);
+
+    EXPECT_TRUE(cop.write_op == std::get<0>(reg_pcsrc_nextins).write_op);
+
+    EXPECT_EQ(7,std::get<0>(reg_pcsrc_nextins).alu_value);
+
+    uint16_t pc_src = 0;
+    EXPECT_EQ(pc_src, std::get<1>(reg_pcsrc_nextins));
+
+    EXPECT_EQ(1, std::get<0>(reg_pcsrc_nextins).write_back_address);
+
+
+
+}
+
 TEST_F(PipelineStageTest, WriteStageRCategoryAdd) {
     PWriteStage write_stage;
 
@@ -400,6 +431,5 @@ TEST_F(PipelineStageTest, WriteStageRCategoryAdd) {
     EXPECT_EQ(true, write_value.write);
     EXPECT_EQ(6, write_value.value);
     EXPECT_EQ(2, write_value.reg_index);
-
 }
 
