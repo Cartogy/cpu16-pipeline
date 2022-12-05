@@ -433,3 +433,24 @@ TEST_F(PipelineStageTest, WriteStageRCategoryAdd) {
     EXPECT_EQ(2, write_value.reg_index);
 }
 
+TEST_F(PipelineStageTest, WriteStageRCategorySub) {
+    PWriteStage write_stage;
+
+    MemWriteReg<uint16_t, uint16_t> mem_reg;
+    mem_reg.set_valid(true);
+
+    // Prepare control op
+    mem_reg.write_op.reg_write = 1;
+    mem_reg.write_op.mem_to_reg = 0;
+
+    // Prepare register values
+    mem_reg.alu_value = 2;
+    mem_reg.write_back_address = 2;
+
+    UpdateArch<uint16_t, uint16_t> write_value = write_stage.exec(mem_reg);
+
+    EXPECT_EQ(true, write_value.write);
+    EXPECT_EQ(2, write_value.value);
+    EXPECT_EQ(2, write_value.reg_index);
+}
+
