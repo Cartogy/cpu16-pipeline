@@ -4,7 +4,7 @@
 
 #include "ControlUnit/control_unit_16.hpp"
 #include "InstructionMemory/instruction_memory.hpp"
-#include "PipelineRegister/pipeline_register.hpp"
+#include "Pipeline/PipelineRegister/pipeline_register.hpp"
 #include "Memory/memory.hpp"
 #include "ALU/alu_16.hpp"
 

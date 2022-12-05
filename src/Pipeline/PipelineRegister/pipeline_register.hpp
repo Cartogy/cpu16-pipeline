@@ -7,7 +7,7 @@
 
 struct PipelineRegister {
     protected:
-        bool valid;
+        bool valid = false;
     public:
         bool is_valid();
         void set_valid(bool val);

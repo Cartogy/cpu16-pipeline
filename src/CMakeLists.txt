@@ -9,5 +9,6 @@ add_subdirectory(InstructionMemory)
 add_subdirectory(Memory)
 add_subdirectory(ControlUnit)
 add_subdirectory(ALU)
+add_subdirectory(Emulator)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC StateElements)
